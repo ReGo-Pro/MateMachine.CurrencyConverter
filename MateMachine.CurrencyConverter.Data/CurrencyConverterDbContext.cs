@@ -1,12 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MateMachine.CurrencyConverter.Data.Entities;
 
 namespace MateMachine.CurrencyConverter.Data {
     public class CurrencyConverterDbContext : DbContext {
         public CurrencyConverterDbContext(DbContextOptions<CurrencyConverterDbContext> options) : base(options) { }
+
+        public DbSet<Currency> Currencies { get; set; }
     }
 }
