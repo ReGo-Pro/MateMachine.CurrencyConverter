@@ -8,6 +8,6 @@ namespace MateMachine.CurrencyConverter.Data.Interfaces {
     public interface IUnitOfWork {
         ICurrencyRepository CurrencyRepo { get; }
         ICurrencyExchangeRateRepository ExchangeRateRepo { get; }
-        void CompleteAsync();
+        Task CompleteAsync();
     }
 }

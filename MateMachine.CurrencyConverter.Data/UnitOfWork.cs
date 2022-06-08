@@ -18,8 +18,8 @@ namespace MateMachine.CurrencyConverter.Data {
         public ICurrencyRepository CurrencyRepo { get; private set;}
         public ICurrencyExchangeRateRepository ExchangeRateRepo { get; private set; }
 
-        public void CompleteAsync() {
-            _dbContext.SaveChangesAsync();
+        public async Task CompleteAsync() {
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

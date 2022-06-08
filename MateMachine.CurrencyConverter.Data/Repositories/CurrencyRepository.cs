@@ -14,7 +14,7 @@ namespace MateMachine.CurrencyConverter.Data.Repositories {
 
         public Currency GetByName(string name) {
             name = name.ToUpper();
-            return DbContext.Currencies.Single(c => c.Name == name);
+            return DbContext.Currencies.SingleOrDefault(c => c.Name == name);
         }
 
         private CurrencyConverterDbContext DbContext {
