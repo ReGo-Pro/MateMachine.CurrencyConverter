@@ -8,21 +8,21 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace MateMachine.CurrencyConverter.Data.Repositories {
-    public class CurrencyExchangeRateRepository : GenericRepository<CurrenyExchangeRate>, ICurrencyExchangeRateRepository {
+    public class CurrencyExchangeRateRepository : GenericRepository<CurrencyExchangeRate>, ICurrencyExchangeRateRepository {
         public CurrencyExchangeRateRepository(CurrencyConverterDbContext dbContext) : base(dbContext) {
         }
 
-        public override IEnumerable<CurrenyExchangeRate> GetAll() {
+        public override IEnumerable<CurrencyExchangeRate> GetAll() {
             return DbContext.ExchangeRates
                 .Include(r => r.FromCurrency)
                 .Include(r => r.ToCurrency);
         }
 
-        public CurrenyExchangeRate GetExchangeRate(Currency from, Currency to) {
+        public CurrencyExchangeRate GetExchangeRate(Currency from, Currency to) {
             return DbContext.ExchangeRates.FirstOrDefault(e => e.FromCurrency == from && e.ToCurrency == to);
         }
 
-        public CurrenyExchangeRate GetExchangeRate(string from, string to) {
+        public CurrencyExchangeRate GetExchangeRate(string from, string to) {
             from = from.ToUpper();
             to = to.ToUpper();
             return DbContext.ExchangeRates.FirstOrDefault(e => e.FromCurrency.Name == from && e.ToCurrency.Name == to);

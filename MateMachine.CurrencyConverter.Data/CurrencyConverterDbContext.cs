@@ -6,6 +6,6 @@ namespace MateMachine.CurrencyConverter.Data {
         public CurrencyConverterDbContext(DbContextOptions<CurrencyConverterDbContext> options) : base(options) { }
 
         public DbSet<Currency> Currencies { get; set; }
-        public DbSet<CurrenyExchangeRate> ExchangeRates { get; set; }
+        public DbSet<CurrencyExchangeRate> ExchangeRates { get; set; }
     }
 }

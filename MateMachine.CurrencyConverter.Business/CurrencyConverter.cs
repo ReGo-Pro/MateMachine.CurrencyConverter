@@ -5,12 +5,12 @@ using System.Collections.Concurrent;
 namespace MateMachine.CurrencyConverter.Business {
     public class CurrencyConverter : ICurrencyConverter {
         private ConcurrentBag<Currency> _allCurrencies;
-        private ConcurrentBag<CurrenyExchangeRate> _allExchangeRates;
+        private ConcurrentBag<CurrencyExchangeRate> _allExchangeRates;
         public bool IsInitialzied { get; private set; }
 
         public CurrencyConverter() {
             _allCurrencies = new ConcurrentBag<Currency>();
-            _allExchangeRates = new ConcurrentBag<CurrenyExchangeRate>();
+            _allExchangeRates = new ConcurrentBag<CurrencyExchangeRate>();
         }
 
         public void ClearConfiguration() {
@@ -62,7 +62,7 @@ namespace MateMachine.CurrencyConverter.Business {
                 }
                 var existingRate = _allExchangeRates.FirstOrDefault(er => er.FromCurrencyId == conversionRate.FromCurrency.Id && er.ToCurrencyId == conversionRate.ToCurrency.Id);
                 if (existingRate == null) {
-                    _allExchangeRates.Add(new CurrenyExchangeRate() {
+                    _allExchangeRates.Add(new CurrencyExchangeRate() {
                         FromCurrency = conversionRate.FromCurrency,
                         ToCurrency = conversionRate.ToCurrency,
                         ExchangeRate = conversionRate.ExchangeRate

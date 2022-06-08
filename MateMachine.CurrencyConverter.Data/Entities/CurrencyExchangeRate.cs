@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace MateMachine.CurrencyConverter.Data.Entities {
-    public class CurrenyExchangeRate {
+    public class CurrencyExchangeRate {
         public int Id { get; set; }
 
         public int FromCurrencyId { get; set; }
