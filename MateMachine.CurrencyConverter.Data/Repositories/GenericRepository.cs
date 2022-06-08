@@ -13,6 +13,10 @@ namespace MateMachine.CurrencyConverter.Data.Repositories {
             dbContext.Add(entity);
         }
 
+        public void AddRange(IEnumerable<TEntity> entities) {
+            dbContext.AddRange(entities);
+        }
+
         public void Remove(TEntity entity) {
             dbContext.Remove(entity);
         }
@@ -23,10 +27,6 @@ namespace MateMachine.CurrencyConverter.Data.Repositories {
 
         public virtual IEnumerable<TEntity> GetAll() {
             return dbContext.Set<TEntity>().ToList();
-        }
-
-        public void Update(TEntity entity) {
-            dbContext.Update(entity);
         }
     }
 }

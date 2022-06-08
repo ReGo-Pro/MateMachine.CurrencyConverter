@@ -29,27 +29,29 @@ namespace MateMachine.CurrencyConverter.Controllers {
         }
 
         [HttpPost("Currencies")]
-        public async Task<IActionResult> SaveCurrency([FromBody] CurrencyViewModel model) {
+        public async Task<IActionResult> SaveCurrencies([FromBody] IEnumerable<CurrencyViewModel> model) {
             if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
             }
 
-            var existingCurrency = _uow.CurrencyRepo.GetByName(model.Name);
-            if (existingCurrency != null) {
-                return BadRequest("Currency already exists");
+            var newCurrencies = new List<Currency>();
+            foreach (var currencyModel in model) {
+                var existingCurrency = _uow.CurrencyRepo.GetByName(currencyModel.Name);
+                if (existingCurrency != null) {
+                    return BadRequest("Currency already exists");
+                }
+                newCurrencies.Add(new Currency() {
+                    Name = currencyModel.Name,
+                    FullName = currencyModel.FullName,
+                });
             }
-
-            var currency = new Currency() {
-                Name = model.Name,
-                FullName = model.FullName,
-            };
-            _uow.CurrencyRepo.Add(currency);
             try {
+                _uow.CurrencyRepo.AddRange(newCurrencies);
                 await _uow.CompleteAsync();
-                return Created("", currency);
+                return Created("", newCurrencies);
             }
-            catch (Exception ex) {
-                // TODO: should return a proper error message
+            catch (Exception) {
+                // TODO: Handle gracefully
                 throw;
             }
         }
