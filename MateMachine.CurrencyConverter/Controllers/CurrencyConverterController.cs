@@ -99,7 +99,12 @@ namespace MateMachine.CurrencyConverter.Controllers {
             if (toCurrency == null) {
                 return BadRequest($"Invalid currency {ToCurrency}");
             }
-            return Ok(_currencyConverter.Convert(fromCurrency, toCurrency, Amount));
+
+            var convertedAmount = _currencyConverter.Convert(fromCurrency, toCurrency, Amount);
+            if (convertedAmount == null) {
+                return NotFound($"No path was found from {FromCurrency} to {ToCurrency}");
+            }
+            return Ok();
         }
     }
 }
