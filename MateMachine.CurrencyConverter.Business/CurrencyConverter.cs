@@ -58,7 +58,12 @@ namespace MateMachine.CurrencyConverter.Business {
         }
 
         public void UpdateConfiguration(IEnumerable<Tuple<string, string, double>> conversionRates) {
-            throw new NotImplementedException();
+            foreach (var conversionRate in conversionRates) {
+                var existingRate = _currencyExchangeRateRepository.GetExchangeRate(conversionRate.Item1, conversionRate.Item2);
+                if (existingRate != null) {
+                    existingRate.ExchangeRate = conversionRate.Item3;
+                }
+            }
         }
     }
 }
