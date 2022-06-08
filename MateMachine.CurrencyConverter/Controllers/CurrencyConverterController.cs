@@ -69,7 +69,7 @@ namespace MateMachine.CurrencyConverter.Controllers {
         }
 
         [HttpPost("ExchangeRates")]
-        public async Task<IActionResult> SaveExchangeRate([FromBody]IEnumerable<ExchangeRateViewModel> model) {
+        public async Task<IActionResult> SaveExchangeRate([FromBody] IEnumerable<ExchangeRateViewModel> model) {
             if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
             }
@@ -97,12 +97,39 @@ namespace MateMachine.CurrencyConverter.Controllers {
                 _currencyConverter.UpdateConfiguration(newExchangeRates.Select(c => (c.FromCurrency, c.ToCurrency, c.ExchangeRate)));
                 return Created("", newExchangeRates.Select(er => new ExchangeRateViewModel() {
                     FromCurrency = er.FromCurrency.Name,
-                    ToCurrency= er.ToCurrency.Name,
+                    ToCurrency = er.ToCurrency.Name,
                     ExchangeRate = er.ExchangeRate
                 }));
             }
             catch (Exception) {
                 // TODO: Handle gracefully
+                throw;
+            }
+        }
+
+        [HttpPut("ExchangeRates")]
+        public async Task<IActionResult> UpdateExchangeRates([FromBody] IEnumerable<ExchangeRateViewModel> model) {
+            if (!ModelState.IsValid) {
+                return BadRequest(ModelState);
+            }
+
+            var existingExchangeRates = new List<CurrencyExchangeRate>();
+            foreach (var erModel in model) {
+                var existingExchangeRate = _uow.ExchangeRateRepo.GetExchangeRate(erModel.FromCurrency, erModel.ToCurrency);
+                if (existingExchangeRate == null) {
+                    return NotFound("Exchange rate not found");
+                }
+                existingExchangeRate.ExchangeRate = erModel.ExchangeRate;
+                existingExchangeRates.Add(existingExchangeRate);
+            }
+
+            try {
+                await _uow.CompleteAsync();
+                _currencyConverter.UpdateConfiguration(existingExchangeRates.Select(c => (c.FromCurrency, c.ToCurrency, c.ExchangeRate)));
+                return Ok("Updated");
+            }
+            catch (Exception) {
+                // Handle gracefully
                 throw;
             }
         }
