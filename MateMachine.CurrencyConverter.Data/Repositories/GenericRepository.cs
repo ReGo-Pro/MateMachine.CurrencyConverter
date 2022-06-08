@@ -13,11 +13,11 @@ namespace MateMachine.CurrencyConverter.Data.Repositories {
             dbContext.Add(entity);
         }
 
-        public void Delete(TEntity entity) {
+        public void Remove(TEntity entity) {
             dbContext.Remove(entity);
         }
 
-        public TEntity Get(int id) {
+        public TEntity Find(int id) {
             return (TEntity)dbContext.Find(typeof(TEntity), id);
         }
 
