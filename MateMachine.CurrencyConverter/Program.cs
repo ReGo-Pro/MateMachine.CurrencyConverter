@@ -9,7 +9,7 @@ builder.Services.AddControllersWithViews();
 DbStartupHelper.AddDbContextTransient(builder.Services);
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 // This service cannot be singleton for now, check!
-builder.Services.AddTransient<ICurrencyConverter, CurrencyConverter>();
+builder.Services.AddSingleton<ICurrencyConverter, CurrencyConverter>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

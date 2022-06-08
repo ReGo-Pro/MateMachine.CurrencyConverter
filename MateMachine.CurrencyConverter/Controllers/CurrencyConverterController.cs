@@ -13,6 +13,9 @@ namespace MateMachine.CurrencyConverter.Controllers {
         public CurrencyConverterController(IUnitOfWork uow, ICurrencyConverter currencyConverter) {
             _uow = uow;
             _currencyConverter = currencyConverter;
+            if (!_currencyConverter.IsInitialzied) {
+                _currencyConverter.Initialize(_uow.CurrencyRepo.GetAll(), _uow.ExchangeRateRepo.GetAll());
+            }
         }
 
         [HttpGet("Currencies")]
@@ -59,7 +62,7 @@ namespace MateMachine.CurrencyConverter.Controllers {
         }
 
         [HttpPost("ExchangeRates")]
-        public async Task<IActionResult> SaveOrUpdateExchangeRate([FromBody]ExchangeRateViewModel model) {
+        public IActionResult SaveOrUpdateExchangeRate([FromBody]ExchangeRateViewModel model) {
             if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
             }
@@ -75,8 +78,8 @@ namespace MateMachine.CurrencyConverter.Controllers {
             }
 
             try {
-                await _currencyConverter.UpdateConfiguration(new List<(string, string, double)>() {
-                    (model.FromCurrency, model.ToCurrency, model.ExchangeRate)
+                _currencyConverter.UpdateConfiguration(new List<(Currency, Currency, double)>() {
+                    (fromCurrency, toCurrency, model.ExchangeRate)
                 });
                 return Ok("Successful");
             }
@@ -87,8 +90,16 @@ namespace MateMachine.CurrencyConverter.Controllers {
         }
 
         [HttpGet("Convert/{FromCurrency}/{ToCurrency}/{Amount}")]
-        public double? Convert(string FromCurrency, string ToCurrency, double Amount) {
-            return _currencyConverter.Convert(FromCurrency, ToCurrency, Amount);
+        public IActionResult Convert(string FromCurrency, string ToCurrency, double Amount) {
+            var fromCurrency = _uow.CurrencyRepo.GetByName(FromCurrency);
+            if (fromCurrency == null) {
+                return BadRequest($"Invalid currency {FromCurrency}");
+            }
+            var toCurrency = _uow.CurrencyRepo.GetByName(ToCurrency);
+            if (toCurrency == null) {
+                return BadRequest($"Invalid currency {ToCurrency}");
+            }
+            return Ok(_currencyConverter.Convert(fromCurrency, toCurrency, Amount));
         }
     }
 }

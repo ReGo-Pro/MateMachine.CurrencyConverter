@@ -1,46 +1,51 @@
 ﻿using MateMachine.CurrencyConverter.Data.Entities;
 using MateMachine.CurrencyConverter.Data.Interfaces;
-using MateMachine.CurrencyConverter.Data.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.Concurrent;
 
 namespace MateMachine.CurrencyConverter.Business {
     public class CurrencyConverter : ICurrencyConverter {
-        private IUnitOfWork _uow;
+        private ConcurrentBag<Currency> _allCurrencies;
+        private ConcurrentBag<CurrenyExchangeRate> _allExchangeRates;
+        public bool IsInitialzied { get; private set; }
 
-        public CurrencyConverter(IUnitOfWork uow) {
-            _uow = uow;
+        public CurrencyConverter() {
+            _allCurrencies = new ConcurrentBag<Currency>();
+            _allExchangeRates = new ConcurrentBag<CurrenyExchangeRate>();
+        }
+
+        public void Initialize(IEnumerable<Currency> allCurrencies, IEnumerable<CurrenyExchangeRate> allExchangeRates) {
+            foreach (var currency in allCurrencies) {
+                _allCurrencies.Add(currency);
+            }
+            foreach (var exchangeRate in allExchangeRates) {
+                _allExchangeRates.Add(exchangeRate);
+            }
+            IsInitialzied = true;
         }
 
         public void ClearConfiguration() {
-            throw new NotImplementedException();
+            _allCurrencies.Clear();
+            _allExchangeRates.Clear();
         }
 
-        public double? Convert(string fromCurrency, string toCurrency, double amount) {
-            var source = _uow.CurrencyRepo.GetByName(fromCurrency);
-            var destination = _uow.CurrencyRepo.GetByName(toCurrency);
-
-            var directExchangeRate = _uow.ExchangeRateRepo.GetExchangeRate(source, destination);
+        // This method is still unsafe
+        public double? Convert(Currency fromCurrency, Currency toCurrency, double amount) {
+            var directExchangeRate = _allExchangeRates.SingleOrDefault(c => c.FromCurrencyId == fromCurrency.Id && c.ToCurrencyId == toCurrency.Id);
             if (directExchangeRate == null) {
-                var reverseExchangeRate = _uow.ExchangeRateRepo.GetExchangeRate(destination, source);
+                var reverseExchangeRate = _allExchangeRates.SingleOrDefault(c => c.FromCurrencyId == toCurrency.Id && c.ToCurrencyId == fromCurrency.Id);
                 if (reverseExchangeRate == null) {
                     CurrencyConversionGraph currencyConversionGraph = new CurrencyConversionGraph();
-                    var allCurrencies = _uow.CurrencyRepo.GetAll();
-                    var allExchangeRates = _uow.ExchangeRateRepo.GetAll();
-                    currencyConversionGraph.AddNodes(allCurrencies);
-                    currencyConversionGraph.AddEdges(allExchangeRates);
-                    var shortestPath = currencyConversionGraph.GetShortestPath(source, destination);
+                    currencyConversionGraph.AddNodes(_allCurrencies);
+                    currencyConversionGraph.AddEdges(_allExchangeRates);
+                    var shortestPath = currencyConversionGraph.GetShortestPath(fromCurrency, toCurrency);
                     if (shortestPath == null) {
                         return null;
                     }
                     else {
                         for (int i = 0; i < shortestPath.Count - 1; i++) {
-                            var rate = allExchangeRates.SingleOrDefault(e => e.FromCurrency == shortestPath[i] && e.ToCurrency == shortestPath[i + 1]);
+                            var rate = _allExchangeRates.SingleOrDefault(e => e.FromCurrency == shortestPath[i] && e.ToCurrency == shortestPath[i + 1]);
                             if (rate == null) {
-                                rate = allExchangeRates.SingleOrDefault(e => e.FromCurrency == shortestPath[i + 1] && e.ToCurrency == shortestPath[i]);
+                                rate = _allExchangeRates.SingleOrDefault(e => e.FromCurrency == shortestPath[i + 1] && e.ToCurrency == shortestPath[i]);
                                 amount *= (1 / rate.ExchangeRate);
                             }
                             else {
@@ -56,13 +61,13 @@ namespace MateMachine.CurrencyConverter.Business {
             return amount * directExchangeRate.ExchangeRate;
         }
 
-        public async Task UpdateConfiguration(IEnumerable<(string FromCurrency, string ToCurrency, double ExchangeRate)> conversionRates) {
+        public void UpdateConfiguration(IEnumerable<(Currency FromCurrency, Currency ToCurrency, double ExchangeRate)> conversionRates) {
             foreach (var conversionRate in conversionRates) {
-                var existingRate = _uow.ExchangeRateRepo.GetExchangeRate(conversionRate.FromCurrency, conversionRate.ToCurrency);
+                var existingRate = _allExchangeRates.FirstOrDefault(er => er.FromCurrencyId == conversionRate.FromCurrency.Id && er.ToCurrencyId == conversionRate.ToCurrency.Id);
                 if (existingRate == null) {
-                    _uow.ExchangeRateRepo.Add(new CurrenyExchangeRate() {
-                        FromCurrency = _uow.CurrencyRepo.GetByName(conversionRate.FromCurrency),
-                        ToCurrency = _uow.CurrencyRepo.GetByName(conversionRate.ToCurrency),
+                    _allExchangeRates.Add(new CurrenyExchangeRate() {
+                        FromCurrency = conversionRate.FromCurrency,
+                        ToCurrency = conversionRate.ToCurrency,
                         ExchangeRate = conversionRate.ExchangeRate
                     });
                 }
@@ -70,7 +75,6 @@ namespace MateMachine.CurrencyConverter.Business {
                     existingRate.ExchangeRate = conversionRate.ExchangeRate;
                 }
             }
-            await _uow.CompleteAsync();
         }
     }
 }
