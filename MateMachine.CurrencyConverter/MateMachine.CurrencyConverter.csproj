@@ -6,4 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MateMachine.CurrencyConverter.Data\MateMachine.CurrencyConverter.Data.csproj" />
+  </ItemGroup>
+
 </Project>
