@@ -85,5 +85,10 @@ namespace MateMachine.CurrencyConverter.Controllers {
                 throw;
             }
         }
+
+        [HttpGet("Convert/{FromCurrency}/{ToCurrency}/{Amount}")]
+        public double? Convert(string FromCurrency, string ToCurrency, double Amount) {
+            return _currencyConverter.Convert(FromCurrency, ToCurrency, Amount);
+        }
     }
 }
