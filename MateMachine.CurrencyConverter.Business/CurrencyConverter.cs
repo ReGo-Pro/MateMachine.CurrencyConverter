@@ -56,7 +56,7 @@ namespace MateMachine.CurrencyConverter.Business {
             return amount * directExchangeRate.ExchangeRate;
         }
 
-        public void UpdateConfiguration(IEnumerable<(string FromCurrency, string ToCurrency, double ExchangeRate)> conversionRates) {
+        public async Task UpdateConfiguration(IEnumerable<(string FromCurrency, string ToCurrency, double ExchangeRate)> conversionRates) {
             foreach (var conversionRate in conversionRates) {
                 var existingRate = _uow.ExchangeRateRepo.GetExchangeRate(conversionRate.FromCurrency, conversionRate.ToCurrency);
                 if (existingRate == null) {
@@ -70,6 +70,7 @@ namespace MateMachine.CurrencyConverter.Business {
                     existingRate.ExchangeRate = conversionRate.ExchangeRate;
                 }
             }
+            await _uow.CompleteAsync();
         }
     }
 }

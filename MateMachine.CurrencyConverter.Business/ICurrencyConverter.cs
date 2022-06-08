@@ -14,7 +14,7 @@ namespace MateMachine.CurrencyConverter.Business {
         /// <summary> 
         /// Updates the configuration. Rates are inserted or replaced internally. 
         /// </summary> 
-        void UpdateConfiguration(IEnumerable<(string FromCurrency, string ToCurrency, double ExchangeRate)> conversionRates);
+        Task UpdateConfiguration(IEnumerable<(string FromCurrency, string ToCurrency, double ExchangeRate)> conversionRates);
 
         /// <summary> 
         /// Converts the specified amount to the desired currency. 
