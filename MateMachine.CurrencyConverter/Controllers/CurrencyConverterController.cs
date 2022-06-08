@@ -66,24 +66,33 @@ namespace MateMachine.CurrencyConverter.Controllers {
         }
 
         [HttpPost("ExchangeRates")]
-        public IActionResult SaveOrUpdateExchangeRate([FromBody]ExchangeRateViewModel model) {
+        public async Task<IActionResult> SaveExchangeRate([FromBody]IEnumerable<ExchangeRateViewModel> model) {
             if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
             }
 
-            // This lookup is redundent, take care of this
-            var fromCurrency = _uow.CurrencyRepo.GetByName(model.FromCurrency);
-            if (fromCurrency == null) {
-                return BadRequest($"Invalid currency {model.FromCurrency}");
-            }
-            var toCurrency = _uow.CurrencyRepo.GetByName(model.ToCurrency);
-            if (toCurrency == null) {
-                return BadRequest($"Invalid currency {model.ToCurrency}");
+            var newExchangeRates = new List<CurrencyExchangeRate>();
+            foreach (var erModel in model) {
+                var fromCurrency = _uow.CurrencyRepo.GetByName(erModel.FromCurrency);
+                if (fromCurrency == null) {
+                    return BadRequest($"Invalid currency {erModel.FromCurrency}");
+                }
+                var toCurrency = _uow.CurrencyRepo.GetByName(erModel.ToCurrency);
+                if (toCurrency == null) {
+                    return BadRequest($"Invalid currency {erModel.ToCurrency}");
+                }
+                newExchangeRates.Add(new CurrencyExchangeRate() {
+                    FromCurrency = fromCurrency,
+                    ToCurrency = toCurrency,
+                    ExchangeRate = erModel.ExchangeRate
+                });
             }
 
             try {
-                _currencyConverter.UpdateConfiguration(new List<(Currency, Currency, double)>() { (fromCurrency, toCurrency, model.ExchangeRate) });
-                return Ok("Successful");
+                _uow.ExchangeRateRepo.AddRange(newExchangeRates);
+                await _uow.CompleteAsync();
+                _currencyConverter.UpdateConfiguration(newExchangeRates.Select(c => (c.FromCurrency, c.ToCurrency, c.ExchangeRate)));
+                return Created("", newExchangeRates);
             }
             catch (Exception) {
                 // TODO: Handle gracefully
