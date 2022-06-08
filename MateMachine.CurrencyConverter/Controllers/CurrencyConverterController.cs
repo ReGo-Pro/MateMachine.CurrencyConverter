@@ -13,7 +13,10 @@ namespace MateMachine.CurrencyConverter.Controllers {
 
         [HttpGet("Currencies")]
         public IActionResult GetAllCurrencies() {
-            return Ok(_uow.CurrencyRepo.GetAll());
+            return Ok(_uow.CurrencyRepo.GetAll().Select(c => new CurrencyViewModel() {
+                Name = c.Name,
+                FullName = c.FullName
+            }));
         }
 
         [HttpPost("Currencies")]
