@@ -1,4 +1,5 @@
-﻿using MateMachine.CurrencyConverter.Data.Entities;
+﻿using MateMachine.CurrencyConverter.Business;
+using MateMachine.CurrencyConverter.Data.Entities;
 using MateMachine.CurrencyConverter.Data.Interfaces;
 using MateMachine.CurrencyConverter.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -7,8 +8,11 @@ namespace MateMachine.CurrencyConverter.Controllers {
     [Route("api/CurrencyConverter")]
     public class CurrencyConverterController : Controller {
         private IUnitOfWork _uow;
-        public CurrencyConverterController(IUnitOfWork uow) {
+        private ICurrencyConverter _currencyConverter;
+
+        public CurrencyConverterController(IUnitOfWork uow, ICurrencyConverter currencyConverter) {
             _uow = uow;
+            _currencyConverter = currencyConverter;
         }
 
         [HttpGet("Currencies")]
@@ -52,6 +56,34 @@ namespace MateMachine.CurrencyConverter.Controllers {
                 ToCurrency = er.ToCurrency.Name,
                 ExchangeRate = er.ExchangeRate
             }));
+        }
+
+        [HttpPost("ExchangeRates")]
+        public async Task<IActionResult> SaveOrUpdateExchangeRate([FromBody]ExchangeRateViewModel model) {
+            if (!ModelState.IsValid) {
+                return BadRequest(ModelState);
+            }
+
+            // This lookup is redundent, take care of this
+            var fromCurrency = _uow.CurrencyRepo.GetByName(model.FromCurrency);
+            if (fromCurrency == null) {
+                return BadRequest($"Invalid currency {model.FromCurrency}");
+            }
+            var toCurrency = _uow.CurrencyRepo.GetByName(model.ToCurrency);
+            if (toCurrency == null) {
+                return BadRequest($"Invalid currency {model.ToCurrency}");
+            }
+
+            try {
+                await _currencyConverter.UpdateConfiguration(new List<(string, string, double)>() {
+                    (model.FromCurrency, model.ToCurrency, model.ExchangeRate)
+                });
+                return Ok("Successful");
+            }
+            catch (Exception) {
+                // TODO: Handle gracefully
+                throw;
+            }
         }
     }
 }
