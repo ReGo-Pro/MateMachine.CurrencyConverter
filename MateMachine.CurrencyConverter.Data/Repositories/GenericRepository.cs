@@ -21,7 +21,7 @@ namespace MateMachine.CurrencyConverter.Data.Repositories {
             return (TEntity)dbContext.Find(typeof(TEntity), id);
         }
 
-        public IEnumerable<TEntity> GetAll() {
+        public virtual IEnumerable<TEntity> GetAll() {
             return dbContext.Set<TEntity>().ToList();
         }
 
