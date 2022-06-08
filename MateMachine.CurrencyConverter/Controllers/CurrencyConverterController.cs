@@ -14,7 +14,9 @@ namespace MateMachine.CurrencyConverter.Controllers {
             _uow = uow;
             _currencyConverter = currencyConverter;
             if (!_currencyConverter.IsInitialzied) {
-                _currencyConverter.Initialize(_uow.CurrencyRepo.GetAll(), _uow.ExchangeRateRepo.GetAll());
+                _currencyConverter.UpdateConfiguration(_uow.ExchangeRateRepo
+                                                           .GetAll()
+                                                           .Select(er => (er.FromCurrency, er.ToCurrency, er.ExchangeRate)));
             }
         }
 
@@ -27,7 +29,7 @@ namespace MateMachine.CurrencyConverter.Controllers {
         }
 
         [HttpPost("Currencies")]
-        public async Task<IActionResult> SaveCurrency([FromBody]CurrencyViewModel model) {
+        public async Task<IActionResult> SaveCurrency([FromBody] CurrencyViewModel model) {
             if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
             }
@@ -49,7 +51,7 @@ namespace MateMachine.CurrencyConverter.Controllers {
             catch (Exception ex) {
                 // TODO: should return a proper error message
                 throw;
-            }          
+            }
         }
 
         [HttpGet("ExchangeRates")]
@@ -78,9 +80,7 @@ namespace MateMachine.CurrencyConverter.Controllers {
             }
 
             try {
-                _currencyConverter.UpdateConfiguration(new List<(Currency, Currency, double)>() {
-                    (fromCurrency, toCurrency, model.ExchangeRate)
-                });
+                _currencyConverter.UpdateConfiguration(new List<(Currency, Currency, double)>() { (fromCurrency, toCurrency, model.ExchangeRate) });
                 return Ok("Successful");
             }
             catch (Exception) {

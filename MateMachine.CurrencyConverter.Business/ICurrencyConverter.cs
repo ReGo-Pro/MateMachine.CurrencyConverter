@@ -7,8 +7,11 @@ using System.Threading.Tasks;
 
 namespace MateMachine.CurrencyConverter.Business {
     public interface ICurrencyConverter {
+        /// <summary>
+        /// Determines whether class is already initialzed
+        /// </summary>
         public bool IsInitialzied { get; }
-        void Initialize(IEnumerable<Currency> allCurrencies, IEnumerable<CurrenyExchangeRate> allExchangeRates);
+
         /// <summary> 
         /// Clears any prior configuration. 
         /// </summary> 

@@ -13,16 +13,6 @@ namespace MateMachine.CurrencyConverter.Business {
             _allExchangeRates = new ConcurrentBag<CurrenyExchangeRate>();
         }
 
-        public void Initialize(IEnumerable<Currency> allCurrencies, IEnumerable<CurrenyExchangeRate> allExchangeRates) {
-            foreach (var currency in allCurrencies) {
-                _allCurrencies.Add(currency);
-            }
-            foreach (var exchangeRate in allExchangeRates) {
-                _allExchangeRates.Add(exchangeRate);
-            }
-            IsInitialzied = true;
-        }
-
         public void ClearConfiguration() {
             _allCurrencies.Clear();
             _allExchangeRates.Clear();
@@ -62,7 +52,14 @@ namespace MateMachine.CurrencyConverter.Business {
         }
 
         public void UpdateConfiguration(IEnumerable<(Currency FromCurrency, Currency ToCurrency, double ExchangeRate)> conversionRates) {
+            IsInitialzied = true;
             foreach (var conversionRate in conversionRates) {
+                if (!_allCurrencies.Contains(conversionRate.FromCurrency)) {
+                    _allCurrencies.Add(conversionRate.FromCurrency);
+                }
+                if (!_allCurrencies.Contains((Currency)conversionRate.ToCurrency)) {
+                    _allCurrencies.Add(conversionRate.ToCurrency);
+                }
                 var existingRate = _allExchangeRates.FirstOrDefault(er => er.FromCurrencyId == conversionRate.FromCurrency.Id && er.ToCurrencyId == conversionRate.ToCurrency.Id);
                 if (existingRate == null) {
                     _allExchangeRates.Add(new CurrenyExchangeRate() {
