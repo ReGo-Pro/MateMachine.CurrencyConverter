@@ -48,7 +48,10 @@ namespace MateMachine.CurrencyConverter.Controllers {
             try {
                 _uow.CurrencyRepo.AddRange(newCurrencies);
                 await _uow.CompleteAsync();
-                return Created("", newCurrencies);
+                return Created("", newCurrencies.Select(c => new CurrencyViewModel() {
+                    FullName = c.FullName,
+                    Name = c.Name
+                }));
             }
             catch (Exception) {
                 // TODO: Handle gracefully
@@ -92,7 +95,11 @@ namespace MateMachine.CurrencyConverter.Controllers {
                 _uow.ExchangeRateRepo.AddRange(newExchangeRates);
                 await _uow.CompleteAsync();
                 _currencyConverter.UpdateConfiguration(newExchangeRates.Select(c => (c.FromCurrency, c.ToCurrency, c.ExchangeRate)));
-                return Created("", newExchangeRates);
+                return Created("", newExchangeRates.Select(er => new ExchangeRateViewModel() {
+                    FromCurrency = er.FromCurrency.Name,
+                    ToCurrency= er.ToCurrency.Name,
+                    ExchangeRate = er.ExchangeRate
+                }));
             }
             catch (Exception) {
                 // TODO: Handle gracefully
