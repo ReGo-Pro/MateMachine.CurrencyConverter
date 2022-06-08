@@ -16,6 +16,12 @@ namespace MateMachine.CurrencyConverter.Data.Repositories {
             return DbContext.ExchangeRates.FirstOrDefault(e => e.FromCurrency == from && e.ToCurrency == to);
         }
 
+        public CurrenyExchangeRate GetExchangeRate(string from, string to) {
+            from = from.ToUpper();
+            to = to.ToUpper();
+            return DbContext.ExchangeRates.FirstOrDefault(e => e.FromCurrency.Name == from && e.ToCurrency.Name == to);
+        }
+
         private CurrencyConverterDbContext DbContext {
             get => dbContext as CurrencyConverterDbContext;
         }
