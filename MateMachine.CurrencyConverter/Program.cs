@@ -1,10 +1,12 @@
 using MateMachine.CurrencyConverter.Data;
+using MateMachine.CurrencyConverter.Data.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 DbStartupHelper.AddDbContextTransient(builder.Services);
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
