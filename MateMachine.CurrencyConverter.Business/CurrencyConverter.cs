@@ -20,16 +20,16 @@ namespace MateMachine.CurrencyConverter.Business {
         }
 
         public double? Convert(string fromCurrency, string toCurrency, double amount) {
-            var source = _currencyRepository.GetByName(fromCurrency);
-            var destination = _currencyRepository.GetByName(toCurrency);
+            var source = _uow.CurrencyRepo.GetByName(fromCurrency);
+            var destination = _uow.CurrencyRepo.GetByName(toCurrency);
 
-            var directExchangeRate = _currencyExchangeRateRepository.GetExchangeRate(source, destination);
+            var directExchangeRate = _uow.ExchangeRateRepo.GetExchangeRate(source, destination);
             if (directExchangeRate == null) {
-                var reverseExchangeRate = _currencyExchangeRateRepository.GetExchangeRate(destination, source);
+                var reverseExchangeRate = _uow.ExchangeRateRepo.GetExchangeRate(destination, source);
                 if (reverseExchangeRate == null) {
                     CurrencyConversionGraph currencyConversionGraph = new CurrencyConversionGraph();
-                    var allCurrencies = _currencyRepository.GetAll();
-                    var allExchangeRates = _currencyExchangeRateRepository.GetAll();
+                    var allCurrencies = _uow.CurrencyRepo.GetAll();
+                    var allExchangeRates = _uow.ExchangeRateRepo.GetAll();
                     currencyConversionGraph.AddNodes(allCurrencies);
                     currencyConversionGraph.AddEdges(allExchangeRates);
                     var shortestPath = currencyConversionGraph.GetShortestPath(source, destination);
