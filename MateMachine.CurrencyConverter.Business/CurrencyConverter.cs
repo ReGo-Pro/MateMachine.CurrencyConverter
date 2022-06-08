@@ -1,4 +1,5 @@
-﻿using MateMachine.CurrencyConverter.Data.Interfaces;
+﻿using MateMachine.CurrencyConverter.Data.Entities;
+using MateMachine.CurrencyConverter.Data.Interfaces;
 using MateMachine.CurrencyConverter.Data.Repositories;
 using System;
 using System.Collections.Generic;
@@ -8,12 +9,10 @@ using System.Threading.Tasks;
 
 namespace MateMachine.CurrencyConverter.Business {
     public class CurrencyConverter : ICurrencyConverter {
-        private ICurrencyRepository _currencyRepository;
-        private ICurrencyExchangeRateRepository _currencyExchangeRateRepository;
+        private IUnitOfWork _uow;
 
-        public CurrencyConverter(ICurrencyRepository currencyRepository, ICurrencyExchangeRateRepository currencyExchangeRateRepository ) {
-            _currencyRepository = currencyRepository;
-            _currencyExchangeRateRepository = currencyExchangeRateRepository;
+        public CurrencyConverter(IUnitOfWork uow) {
+            _uow = uow;
         }
 
         public void ClearConfiguration() {
@@ -57,11 +56,18 @@ namespace MateMachine.CurrencyConverter.Business {
             return amount * directExchangeRate.ExchangeRate;
         }
 
-        public void UpdateConfiguration(IEnumerable<Tuple<string, string, double>> conversionRates) {
+        public void UpdateConfiguration(IEnumerable<(string FromCurrency, string ToCurrency, double ExchangeRate)> conversionRates) {
             foreach (var conversionRate in conversionRates) {
-                var existingRate = _currencyExchangeRateRepository.GetExchangeRate(conversionRate.Item1, conversionRate.Item2);
-                if (existingRate != null) {
-                    existingRate.ExchangeRate = conversionRate.Item3;
+                var existingRate = _uow.ExchangeRateRepo.GetExchangeRate(conversionRate.FromCurrency, conversionRate.ToCurrency);
+                if (existingRate == null) {
+                    _uow.ExchangeRateRepo.Add(new CurrenyExchangeRate() {
+                        FromCurrency = _uow.CurrencyRepo.GetByName(conversionRate.FromCurrency),
+                        ToCurrency = _uow.CurrencyRepo.GetByName(conversionRate.ToCurrency),
+                        ExchangeRate = conversionRate.ExchangeRate
+                    });
+                }
+                else {
+                    existingRate.ExchangeRate = conversionRate.ExchangeRate;
                 }
             }
         }

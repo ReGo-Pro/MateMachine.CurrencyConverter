@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace MateMachine.CurrencyConverter.Business {
-    internal interface ICurrencyConverter {
+    public interface ICurrencyConverter {
         /// <summary> 
         /// Clears any prior configuration. 
         /// </summary> 
@@ -14,7 +14,7 @@ namespace MateMachine.CurrencyConverter.Business {
         /// <summary> 
         /// Updates the configuration. Rates are inserted or replaced internally. 
         /// </summary> 
-        void UpdateConfiguration(IEnumerable<Tuple<string, string, double>> conversionRates);
+        void UpdateConfiguration(IEnumerable<(string FromCurrency, string ToCurrency, double ExchangeRate)> conversionRates);
 
         /// <summary> 
         /// Converts the specified amount to the desired currency. 
