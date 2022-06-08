@@ -44,5 +44,14 @@ namespace MateMachine.CurrencyConverter.Controllers {
                 throw;
             }          
         }
+
+        [HttpGet("ExchangeRates")]
+        public IActionResult GetExchangeRates() {
+            return Ok(_uow.ExchangeRateRepo.GetAll().Select(er => new ExchangeRateViewModel() {
+                FromCurrency = er.FromCurrency.Name,
+                ToCurrency = er.ToCurrency.Name,
+                ExchangeRate = er.ExchangeRate
+            }));
+        }
     }
 }
