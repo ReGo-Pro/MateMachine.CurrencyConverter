@@ -19,6 +19,6 @@ namespace MateMachine.CurrencyConverter.Business {
         /// <summary> 
         /// Converts the specified amount to the desired currency. 
         /// </summary> 
-        double Convert(string fromCurrency, string toCurrency, double amount);
+        double? Convert(string fromCurrency, string toCurrency, double amount);
     }
 }
