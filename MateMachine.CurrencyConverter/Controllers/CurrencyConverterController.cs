@@ -149,7 +149,7 @@ namespace MateMachine.CurrencyConverter.Controllers {
             if (convertedAmount == null) {
                 return NotFound($"No path was found from {FromCurrency} to {ToCurrency}");
             }
-            return Ok();
+            return Ok(convertedAmount);
         }
     }
 }

@@ -33,9 +33,9 @@ namespace MateMachine.CurrencyConverter.Business {
                     }
                     else {
                         for (int i = 0; i < shortestPath.Count - 1; i++) {
-                            var rate = _allExchangeRates.SingleOrDefault(e => e.FromCurrency == shortestPath[i] && e.ToCurrency == shortestPath[i + 1]);
+                            var rate = _allExchangeRates.SingleOrDefault(e => e.FromCurrency.Name == shortestPath[i].Name && e.ToCurrency.Name == shortestPath[i + 1].Name);
                             if (rate == null) {
-                                rate = _allExchangeRates.SingleOrDefault(e => e.FromCurrency == shortestPath[i + 1] && e.ToCurrency == shortestPath[i]);
+                                rate = _allExchangeRates.SingleOrDefault(e => e.FromCurrency.Name == shortestPath[i + 1].Name && e.ToCurrency.Name == shortestPath[i].Name);
                                 amount *= (1 / rate.ExchangeRate);
                             }
                             else {
@@ -64,7 +64,9 @@ namespace MateMachine.CurrencyConverter.Business {
                 if (existingRate == null) {
                     _allExchangeRates.Add(new CurrencyExchangeRate() {
                         FromCurrency = conversionRate.FromCurrency,
+                        FromCurrencyId = conversionRate.FromCurrency.Id,
                         ToCurrency = conversionRate.ToCurrency,
+                        ToCurrencyId = conversionRate.ToCurrency.Id,
                         ExchangeRate = conversionRate.ExchangeRate
                     });
                 }
