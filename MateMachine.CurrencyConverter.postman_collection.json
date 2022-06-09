@@ -1,0 +1,153 @@
+{
+  "info": {
+    "_postman_id": "7df1a015-8657-4d37-ab95-2ceb42a10044",
+    "name": "MateMachine.CurrencyConverter",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Insert currencies",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "[\r\n    {\r\n        \"Name\" : \"USD\",\r\n        \"FullName\" : \"United States dollar\"\r\n    },\r\n    {\r\n        \"Name\" : \"CAD\",\r\n        \"FullName\" : \"Canadian dollar\"\r\n    },\r\n    {\r\n        \"Name\" : \"EUR\",\r\n        \"FullName\" : \"Euro\"\r\n    },\r\n    {\r\n        \"Name\" : \"GBP\",\r\n        \"FullName\" : \"Great british pound\"\r\n    },\r\n    {\r\n        \"Name\" : \"SEK\",\r\n        \"FullName\" : \"Swedish krona\"\r\n    },\r\n    {\r\n        \"Name\" : \"JPY\",\r\n        \"FullName\" : \"Japanese yen\"\r\n    },\r\n    {\r\n        \"Name\" : \"CZK\",\r\n        \"FullName\" : \"Czech koruna\"\r\n    },\r\n    {\r\n        \"Name\" : \"EGP\",\r\n        \"FullName\" : \"Egyptian pound\"\r\n    },\r\n    {\r\n        \"Name\" : \"INR\",\r\n        \"FullName\" : \"Indian rupee\"\r\n    },\r\n    {\r\n        \"Name\" : \"AUD\",\r\n        \"FullName\" : \"Australian dollar\"\r\n    }\r\n]",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://localhost:7150/api/currencyconverter/currencies",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7150",
+          "path": [
+            "api",
+            "currencyconverter",
+            "currencies"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Insert exchange rates",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "[\r\n    {\r\n        \"FromCurrency\":\"USD\",\r\n        \"ToCurrency\":\"CAD\",\r\n        \"ExchangeRate\":\"1.34\"\r\n    },\r\n    {\r\n        \"FromCurrency\":\"CAD\",\r\n        \"ToCurrency\":\"GBP\",\r\n        \"ExchangeRate\":\"0.58\"\r\n    },\r\n    {\r\n        \"FromCurrency\":\"USD\",\r\n        \"ToCurrency\":\"EUR\",\r\n        \"ExchangeRate\":\"0.86\"\r\n    }\r\n]",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://localhost:7150/api/currencyconverter/ExchangeRates",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7150",
+          "path": [
+            "api",
+            "currencyconverter",
+            "ExchangeRates"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update exchange rates",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "[\r\n    {\r\n        \"FromCurrency\":\"USD\",\r\n        \"ToCurrency\":\"EUR\",\r\n        \"ExchangeRate\":\"0.85\"\r\n    }\r\n]",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://localhost:7150/api/currencyconverter/ExchangeRates",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7150",
+          "path": [
+            "api",
+            "currencyconverter",
+            "ExchangeRates"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get all currencies",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://localhost:7150/api/currencyconverter/currencies",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7150",
+          "path": [
+            "api",
+            "currencyconverter",
+            "currencies"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get all exchange rates",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": null
+      },
+      "response": []
+    },
+    {
+      "name": "Convert",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://localhost:7150/api/currencyconverter/convert/gbp/usd/10",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7150",
+          "path": [
+            "api",
+            "currencyconverter",
+            "convert",
+            "gbp",
+            "usd",
+            "10"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

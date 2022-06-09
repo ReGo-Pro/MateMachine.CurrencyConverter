@@ -9,7 +9,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MateMachine.CurrencyConvert
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MateMachine.CurrencyConverter.Data", "MateMachine.CurrencyConverter.Data\MateMachine.CurrencyConverter.Data.csproj", "{43B1540C-8261-4E9E-998B-370FEF238312}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MateMachine.CurrencyConverter.Tests", "MateMachine.CurrencyConverter.Tests\MateMachine.CurrencyConverter.Tests.csproj", "{2D60F0D9-2E15-4C91-AF6D-138AB5C6995E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MateMachine.CurrencyConverter.Tests", "MateMachine.CurrencyConverter.Tests\MateMachine.CurrencyConverter.Tests.csproj", "{2D60F0D9-2E15-4C91-AF6D-138AB5C6995E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CFB463C4-463B-488D-A875-54D0BF67B483}"
+	ProjectSection(SolutionItems) = preProject
+		MateMachine.CurrencyConverter.postman_collection.json = MateMachine.CurrencyConverter.postman_collection.json
+		ReadMe.txt = ReadMe.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

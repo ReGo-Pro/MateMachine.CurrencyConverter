@@ -1,0 +1,1 @@
+The JSON file provided in this folder can be impoterd into postman and shows API endpoits exposed by the application.
