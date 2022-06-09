@@ -135,7 +135,7 @@ namespace MateMachine.CurrencyConverter.Controllers {
         }
 
         [HttpGet("Convert/{FromCurrency}/{ToCurrency}/{Amount}")]
-        public IActionResult Convert(string FromCurrency, string ToCurrency, double Amount) {
+        public async Task<IActionResult> Convert(string FromCurrency, string ToCurrency, double Amount) {
             var fromCurrency = _uow.CurrencyRepo.GetByName(FromCurrency);
             if (fromCurrency == null) {
                 return BadRequest($"Invalid currency {FromCurrency}");
@@ -145,7 +145,7 @@ namespace MateMachine.CurrencyConverter.Controllers {
                 return BadRequest($"Invalid currency {ToCurrency}");
             }
 
-            var convertedAmount = _currencyConverter.Convert(fromCurrency, toCurrency, Amount);
+            var convertedAmount = await _currencyConverter.ConvertAsync(fromCurrency, toCurrency, Amount);
             if (convertedAmount == null) {
                 return NotFound($"No path was found from {FromCurrency} to {ToCurrency}");
             }

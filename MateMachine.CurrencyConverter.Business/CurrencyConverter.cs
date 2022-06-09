@@ -19,7 +19,7 @@ namespace MateMachine.CurrencyConverter.Business {
         }
 
         // This method is still unsafe
-        public double? Convert(Currency fromCurrency, Currency toCurrency, double amount) {
+        private double? Convert(Currency fromCurrency, Currency toCurrency, double amount) {
             var directExchangeRate = _allExchangeRates.SingleOrDefault(c => c.FromCurrencyId == fromCurrency.Id && c.ToCurrencyId == toCurrency.Id);
             if (directExchangeRate == null) {
                 var reverseExchangeRate = _allExchangeRates.SingleOrDefault(c => c.FromCurrencyId == toCurrency.Id && c.ToCurrencyId == fromCurrency.Id);
@@ -49,6 +49,10 @@ namespace MateMachine.CurrencyConverter.Business {
                 return amount / reverseExchangeRate.ExchangeRate;
             }
             return amount * directExchangeRate.ExchangeRate;
+        }
+
+        public async Task<double?> ConvertAsync(Currency fromCurrency, Currency toCurrency, double amount) {
+            return await Task.Run(() => Convert(fromCurrency, toCurrency, amount));
         }
 
         public void UpdateConfiguration(IEnumerable<(Currency FromCurrency, Currency ToCurrency, double ExchangeRate)> conversionRates) {

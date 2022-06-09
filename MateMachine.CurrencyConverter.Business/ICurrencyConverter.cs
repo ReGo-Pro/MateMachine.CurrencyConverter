@@ -25,6 +25,6 @@ namespace MateMachine.CurrencyConverter.Business {
         /// <summary> 
         /// Converts the specified amount to the desired currency. 
         /// </summary> 
-        double? Convert(Currency fromCurrency, Currency toCurrency, double amount);
+        Task<double?> ConvertAsync(Currency fromCurrency, Currency toCurrency, double amount);
     }
 }
